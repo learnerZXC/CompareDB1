@@ -21,7 +21,7 @@ public class TestConnection {
 	
 	@Test
 	public void getConnectionTest() throws SQLException {
-		ConnectionMessage connectionMessage = new ConnectionMessage("127.0.0.1","3306","root","mysql");
+		ConnectionMessage connectionMessage = new ConnectionMessage("127.0.0.1","3306","root","echoecho");
 		Connection conn = compareDao.getConnection(connectionMessage);
 		System.out.println(conn);
 	}
