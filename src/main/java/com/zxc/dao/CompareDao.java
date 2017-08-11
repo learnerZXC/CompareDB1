@@ -10,6 +10,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zxc.entity.CompareResult;
 import com.zxc.entity.ConnectionMessage;
@@ -33,21 +36,179 @@ public class CompareDao {
 		return conn;
 	}
 	
+	//比较两个数据库中相同表名的不同字段
 	public List<CompareResult> compareColumnBetweenSameTableName(ConnectionMessage connectionMessage) throws SQLException{
 		Connection conn = this.getConnection(connectionMessage);
-		String sql = "select distinct a.TABLE_SCHEMA,a.TABLE_NAME,a.COLUMN_NAME from " + 
+		String sql1 = "select distinct a.TABLE_SCHEMA,a.TABLE_NAME,a.COLUMN_NAME from " + 
 				"(select TABLE_SCHEMA,TABLE_NAME,COLUMN_NAME,DATA_TYPE from information_schema.`COLUMNS` a where a.TABLE_SCHEMA in('"+connectionMessage.getDb1Name()  +"')) a left join " + 
 				"(select TABLE_SCHEMA,TABLE_NAME,COLUMN_NAME,DATA_TYPE from information_schema.`COLUMNS` a where a.TABLE_SCHEMA in('"+connectionMessage.getDb2Name()+"')) b on a.TABLE_NAME=b.TABLE_NAME " + 
 				"where a.TABLE_NAME=b.TABLE_NAME and a.COLUMN_NAME NOT IN " + 
 				"(SELECT b.COLUMN_NAME from information_schema.`COLUMNS` b where b.TABLE_SCHEMA='"+connectionMessage.getDb2Name()+"' and a.TABLE_SCHEMA='"+connectionMessage.getDb1Name()+"' and a.TABLE_NAME=b.TABLE_NAME);";
+		PreparedStatement statement1 = conn.prepareStatement(sql1.toString());
+		ResultSet rs1 = statement1.executeQuery();
+		String sql2 = "select distinct a.TABLE_SCHEMA,a.TABLE_NAME,a.COLUMN_NAME from " + 
+				"(select TABLE_SCHEMA,TABLE_NAME,COLUMN_NAME from information_schema.`COLUMNS` a where a.TABLE_SCHEMA in('"+connectionMessage.getDb2Name()+"')) left join " + 
+				"(select TABLE_SCHEMA,TABLE_NAME,COLUMN_NAME from information_schema.`COLUMNS` a where a.TABLE_SCHEMA in('"+connectionMessage.getDb2Name()+"')) b on a.TABLE_NAME=b.TABLE_NAME " + 
+				"where a.TABLE_NAME=b.TABLE_NAME and a.COLUMN_NAME NOT IN  " + 
+				"(SELECT b.COLUMN_NAME from information_schema.`COLUMNS` b where b.TABLE_SCHEMA='"+connectionMessage.getDb1Name()+"' and a.TABLE_SCHEMA='"+connectionMessage.getDb2Name()+"' and a.TABLE_NAME=b.TABLE_NAME);";
+		PreparedStatement statement2 = conn.prepareStatement(sql2.toString());
+		ResultSet rs2 = statement2.executeQuery();
+		List<CompareResult> resultsList = new ArrayList<CompareResult>();
+		CompareResult compareResult = new CompareResult();
+		while(rs1.next()) {
+			compareResult.setDb1Name(rs1.getString("a.TABLE_SCHEMA"));
+			compareResult.setDb1TableName(rs1.getString("a.TABLE_NAME"));
+			compareResult.setDb1ColumnName(rs1.getString("a.COLUMN_NAME"));
+		}
+		while(rs2.next()) {
+			compareResult.setDb2Name(rs2.getString("a.TABLE_SCHEMA"));
+			compareResult.setDb2TableName(rs2.getString("a.TABLE_NAME"));
+			compareResult.setDb2ColumnName(rs2.getString("a.COLUMN_NAME"));
+		}
+		resultsList.add(compareResult);
+		conn.close();
+		statement1.close();
+		statement2.close();
+		rs1.close();
+		rs2.close();
+		return resultsList;
+	}
+	
+	//比较两个数据库中互相不存在的表
+	public List<CompareResult> compareTableBetweenDifferentDB(ConnectionMessage connectionMessage) throws SQLException{
+		Connection conn = this.getConnection(connectionMessage);
+		String sql = "select b.TABLE_SCHEMA,b.TABLE_NAME,c.TABLE_SCHEMA,c.TABLE_NAME from " + 
+				"(select TABLE_SCHEMA,TABLE_NAME from information_schema.TABLES a where a.TABLE_SCHEMA in('"+connectionMessage.getDb2Name()+"','"+connectionMessage.getDb1Name()+"') )a left join " + 
+				"(select TABLE_SCHEMA,TABLE_NAME from information_schema.TABLES a where a.TABLE_SCHEMA in('"+connectionMessage.getDb2Name()+"')) b  on a.TABLE_NAME=b.TABLE_NAME left join " + 
+				"(select TABLE_SCHEMA,TABLE_NAME from information_schema.TABLES a where a.TABLE_SCHEMA in('"+connectionMessage.getDb1Name()+"')) c on a.TABLE_NAME=c.TABLE_NAME " + 
+				"where b.TABLE_NAME is null or c.TABLE_NAME is null ;";
 		PreparedStatement statement = conn.prepareStatement(sql.toString());
 		ResultSet rs = statement.executeQuery();
 		List<CompareResult> resultsList = new ArrayList<CompareResult>();
 		while(rs.next()) {
 			CompareResult compareResult = new CompareResult();
-			compareResult.setDbName(rs.getString("TABLE_SCHEMA"));
-			compareResult.setTableName(rs.getString("TABLE_NAME"));
-			compareResult.setColumnName(rs.getString("COLUMN_NAME"));
+			compareResult.setDb1Name(rs.getString("c.TABLE_SCHEMA"));
+			compareResult.setDb1TableName(rs.getString("c.TABLE_NAME"));
+			compareResult.setDb2Name(rs.getString("b.TABLE_SCHEMA"));
+			compareResult.setDb2TableName(rs.getString("b.TABLE_NAME"));
+			resultsList.add(compareResult);
+		}
+		conn.close();
+		statement.close();
+		rs.close();
+		return resultsList;
+	}
+	
+	//比较两个数据库相同表的字段不为空是否相同
+	public List<CompareResult> compareColumnIsNullBetweenSameTableName(ConnectionMessage connectionMessage) throws SQLException{
+		Connection conn = this.getConnection(connectionMessage);
+		String sql = "select a.TABLE_SCHEMA,a.TABLE_NAME,a.COLUMN_NAME,a.COLUMN_TYPE,a.IS_NULLABLE,a.COLUMN_DEFAULT,b.TABLE_SCHEMA,b.TABLE_NAME,b.COLUMN_NAME,b.COLUMN_TYPE,b.IS_NULLABLE ,b.COLUMN_DEFAULT,b.COLUMN_COMMENT " + 
+				"from information_schema.`COLUMNS` a inner join information_schema.`COLUMNS` b " + 
+				"on a.TABLE_SCHEMA='"+connectionMessage.getDb1Name()+"' and b.TABLE_SCHEMA='"+connectionMessage.getDb2Name()+"'and a.TABLE_NAME=b.TABLE_NAME and a.COLUMN_NAME=b.COLUMN_NAME and a.IS_NULLABLE<>b.IS_NULLABLE " + 
+				"where a.IS_NULLABLE='NO';";
+		PreparedStatement statement = conn.prepareStatement(sql.toString());
+		ResultSet rs = statement.executeQuery();
+		List<CompareResult> resultsList = new ArrayList<CompareResult>();
+		while(rs.next()) {
+			CompareResult compareResult = new CompareResult();
+			compareResult.setDb1Name(rs.getString("a.TABLE_SCHEMA"));
+			compareResult.setDb1TableName(rs.getString("a.TABLE_NAME"));
+			compareResult .setDb1ColumnName(rs.getString("a.COLUMN_NAME"));
+			compareResult.setDb1ColunmType(rs.getString("a.COLUMN_TYPE"));
+			compareResult.setDb1ColumnIsNull(rs.getString("a.IS_NULLABLE"));
+			compareResult.setDb1ColumnDefault(rs.getString("a.COLUMN_DEFAULT"));
+			compareResult.setDb2Name(rs.getString("b.TABLE_SCHEMA"));
+			compareResult.setDb2TableName(rs.getString("b.TABLE_NAME"));
+			compareResult .setDb2ColumnName(rs.getString("b.COLUMN_NAME"));
+			compareResult.setDb2ColunmType(rs.getString("b.COLUMN_TYPE"));
+			compareResult.setDb2ColumnIsNull(rs.getString("b.IS_NULLABLE"));
+			compareResult.setDb2ColumnDefault(rs.getString("b.COLUMN_DEFAULT"));
+			resultsList.add(compareResult);
+		}
+		conn.close();
+		statement.close();
+		rs.close();
+		return resultsList;
+	}
+			
+	//比较两个数据库相同表的字段默认值是否相同
+	public List<CompareResult> compareColumnDefaultValueIsNullBetweenSameTableName(ConnectionMessage connectionMessage) throws SQLException{
+		Connection conn = this.getConnection(connectionMessage);
+		String sql = "select a.TABLE_SCHEMA,a.TABLE_NAME,a.COLUMN_NAME,a.COLUMN_DEFAULT,b.TABLE_SCHEMA,b.TABLE_NAME,b.COLUMN_NAME,b.COLUMN_DEFAULT from information_schema.`COLUMNS` a " + 
+				"inner join information_schema.`COLUMNS` b on a.TABLE_SCHEMA='"+connectionMessage.getDb1Name()+"' and b.TABLE_SCHEMA='"+connectionMessage.getDb2Name()+"' " + 
+				"and a.TABLE_NAME=b.TABLE_NAME and a.COLUMN_NAME=b.COLUMN_NAME and a.COLUMN_DEFAULT<>b.COLUMN_DEFAULT;";
+		PreparedStatement statement = conn.prepareStatement(sql.toString());
+		ResultSet rs = statement.executeQuery();
+		List<CompareResult> resultsList = new ArrayList<CompareResult>();
+		while(rs.next()) {
+			CompareResult compareResult = new CompareResult();
+			compareResult.setDb1Name(rs.getString("a.TABLE_SCHEMA"));
+			compareResult.setDb1TableName(rs.getString("a.TABLE_NAME"));
+			compareResult .setDb1ColumnName(rs.getString("a.COLUMN_NAME"));
+			compareResult.setDb1ColumnDefault(rs.getString("a.COLUMN_DEFAULT"));
+			compareResult.setDb2Name(rs.getString("b.TABLE_SCHEMA"));
+			compareResult.setDb2TableName(rs.getString("b.TABLE_NAME"));
+			compareResult .setDb2ColumnName(rs.getString("b.COLUMN_NAME"));
+			compareResult.setDb2ColumnDefault(rs.getString("b.COLUMN_DEFAULT"));
+			resultsList.add(compareResult);
+		}
+		conn.close();
+		statement.close();
+		rs.close();
+		return resultsList;
+	}
+			
+	//比较两个数据库相同表的字段数据类型是否相同
+	public List<CompareResult> compareDataTypeBetweenSameTableName(ConnectionMessage connectionMessage) throws SQLException{
+		Connection conn = this.getConnection(connectionMessage);	
+		String sql = "select a.TABLE_SCHEMA,a.TABLE_NAME,a.COLUMN_NAME,a.DATA_TYPE,a.COLUMN_DEFAULT,b.TABLE_SCHEMA,b.TABLE_NAME,b.COLUMN_NAME,b.DATA_TYPE ,b.COLUMN_DEFAULT " + 
+				"from information_schema.`COLUMNS` a inner join information_schema.`COLUMNS` b on a.TABLE_SCHEMA='"+connectionMessage.getDb1Name()+"' and b.TABLE_SCHEMA='"+connectionMessage.getDb2Name()+"' " + 
+				"and a.TABLE_NAME=b.TABLE_NAME and a.COLUMN_NAME=b.COLUMN_NAME and a.DATA_TYPE<>b.DATA_TYPE;";
+		PreparedStatement statement = conn.prepareStatement(sql.toString());
+		ResultSet rs = statement.executeQuery();
+		List<CompareResult> resultsList = new ArrayList<CompareResult>();
+		while(rs.next()) {
+			CompareResult compareResult = new CompareResult();
+			compareResult.setDb1Name(rs.getString("a.TABLE_SCHEMA"));
+			compareResult.setDb1TableName(rs.getString("a.TABLE_NAME"));
+			compareResult .setDb1ColumnName(rs.getString("a.COLUMN_NAME"));
+			compareResult.setDb1DataType(rs.getString("a.DATA_TYPE"));
+			compareResult.setDb1ColumnDefault(rs.getString("a.COLUMN_DEFAULT"));
+			compareResult.setDb2Name(rs.getString("b.TABLE_SCHEMA"));
+			compareResult.setDb2TableName(rs.getString("b.TABLE_NAME"));
+			compareResult .setDb2ColumnName(rs.getString("b.COLUMN_NAME"));
+			compareResult.setDb2DataType(rs.getString("b.DATA_TYPE"));
+			compareResult.setDb2ColumnDefault(rs.getString("b.COLUMN_DEFAULT"));
+			resultsList.add(compareResult);
+		}
+		conn.close();
+		statement.close();
+		rs.close();
+		return resultsList;
+	}
+	//比较两个数据库相同表的字段数据类型的长度是否相同
+	public List<CompareResult> compareColumnTypeBetweenSameTableName(ConnectionMessage connectionMessage) throws SQLException{
+		Connection conn = this.getConnection(connectionMessage);	
+		String sql = "select a.TABLE_SCHEMA,a.TABLE_NAME,a.COLUMN_NAME,a.DATA_TYPE,a.COLUMN_TYPE,a.COLUMN_DEFAULT,b.TABLE_SCHEMA,b.TABLE_NAME,b.COLUMN_NAME,b.DATA_TYPE ,b.COLUMN_TYPE,b.COLUMN_DEFAULT " + 
+				"from information_schema.`COLUMNS` a inner join information_schema.`COLUMNS` b on a.TABLE_SCHEMA='"+connectionMessage.getDb1Name()+"' and b.TABLE_SCHEMA='"+connectionMessage.getDb2Name()+"' " + 
+				"and a.TABLE_NAME=b.TABLE_NAME and a.COLUMN_NAME=b.COLUMN_NAME and a.COLUMN_TYPE<>b.COLUMN_TYPE;";
+		PreparedStatement statement = conn.prepareStatement(sql.toString());
+		ResultSet rs = statement.executeQuery();
+		List<CompareResult> resultsList = new ArrayList<CompareResult>();
+		while(rs.next()) {
+			CompareResult compareResult = new CompareResult();
+			compareResult.setDb1Name(rs.getString("a.TABLE_SCHEMA"));
+			compareResult.setDb1TableName(rs.getString("a.TABLE_NAME"));
+			compareResult .setDb1ColumnName(rs.getString("a.COLUMN_NAME"));
+			compareResult.setDb1DataType(rs.getString("a.DATA_TYPE"));
+			compareResult.setDb1ColunmType(rs.getString("a.COLUMN_TYPE"));
+			compareResult.setDb1ColumnDefault(rs.getString("a.COLUMN_DEFAULT"));
+			compareResult.setDb2Name(rs.getString("b.TABLE_SCHEMA"));
+			compareResult.setDb2TableName(rs.getString("b.TABLE_NAME"));
+			compareResult .setDb2ColumnName(rs.getString("b.COLUMN_NAME"));
+			compareResult.setDb2DataType(rs.getString("b.DATA_TYPE"));
+			compareResult.setDb1ColunmType(rs.getString("b.COLUMN_TYPE"));
+			compareResult.setDb2ColumnDefault(rs.getString("b.COLUMN_DEFAULT"));
 			resultsList.add(compareResult);
 		}
 		conn.close();
