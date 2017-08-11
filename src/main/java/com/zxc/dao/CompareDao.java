@@ -47,10 +47,10 @@ public class CompareDao {
 		PreparedStatement statement1 = conn.prepareStatement(sql1.toString());
 		ResultSet rs1 = statement1.executeQuery();
 		String sql2 = "select distinct a.TABLE_SCHEMA,a.TABLE_NAME,a.COLUMN_NAME from " + 
-				"(select TABLE_SCHEMA,TABLE_NAME,COLUMN_NAME from information_schema.`COLUMNS` a where a.TABLE_SCHEMA in('"+connectionMessage.getDb2Name()+"')) left join " + 
-				"(select TABLE_SCHEMA,TABLE_NAME,COLUMN_NAME from information_schema.`COLUMNS` a where a.TABLE_SCHEMA in('"+connectionMessage.getDb2Name()+"')) b on a.TABLE_NAME=b.TABLE_NAME " + 
+				"(select TABLE_SCHEMA,TABLE_NAME,COLUMN_NAME from information_schema.`COLUMNS` a where a.TABLE_SCHEMA in('"+connectionMessage.getDb2Name()+"')) a left join " + 
+				"(select TABLE_SCHEMA,TABLE_NAME,COLUMN_NAME from information_schema.`COLUMNS` a where a.TABLE_SCHEMA in('"+connectionMessage.getDb1Name()+"')) b on a.TABLE_NAME=b.TABLE_NAME " + 
 				"where a.TABLE_NAME=b.TABLE_NAME and a.COLUMN_NAME NOT IN  " + 
-				"(SELECT b.COLUMN_NAME from information_schema.`COLUMNS` b where b.TABLE_SCHEMA='"+connectionMessage.getDb1Name()+"' and a.TABLE_SCHEMA='"+connectionMessage.getDb2Name()+"' and a.TABLE_NAME=b.TABLE_NAME);";
+				"(select b.COLUMN_NAME from information_schema.`COLUMNS` b where b.TABLE_SCHEMA='"+connectionMessage.getDb1Name()+"' and a.TABLE_SCHEMA='"+connectionMessage.getDb2Name()+"' and a.TABLE_NAME=b.TABLE_NAME);";
 		PreparedStatement statement2 = conn.prepareStatement(sql2.toString());
 		ResultSet rs2 = statement2.executeQuery();
 		List<CompareResult> resultsList = new ArrayList<CompareResult>();
