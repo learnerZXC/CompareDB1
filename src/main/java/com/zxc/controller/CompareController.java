@@ -22,7 +22,7 @@ public class CompareController {
 	
 	//比较两个数据库中相同表名的不同字段
 	@ResponseBody
-	@RequestMapping(value="/compareColumnBetweenSameTableName", method=RequestMethod.POST)
+	@RequestMapping(value="/compareColumnBetweenSameTableName", produces = "application/json; charset=utf-8",method=RequestMethod.POST)
 	public List<CompareResult> compareColumnBetweenSameTableName(ConnectionMessage connectionMessage) throws SQLException{
 		List<CompareResult> resultsList = compareService.compareColumnBetweenSameTableName(connectionMessage);
 		return resultsList;
@@ -30,7 +30,7 @@ public class CompareController {
 	
 	//比较两个数据库中互相不存在的表
 	@ResponseBody
-	@RequestMapping(value="/compareTableBetweenDifferentDB", method=RequestMethod.POST)
+	@RequestMapping(value="/compareTableBetweenDifferentDB",produces = "application/json; charset=utf-8", method=RequestMethod.POST)
 	public List<CompareResult> compareTableBetweenDifferentDB(ConnectionMessage connectionMessage) throws SQLException{
 		List<CompareResult> resultsList = compareService.compareTableBetweenDifferentDB(connectionMessage);
 		return resultsList;
@@ -38,7 +38,7 @@ public class CompareController {
 	
 	//比较两个数据库相同表的字段不为空是否相同
 	@ResponseBody
-	@RequestMapping(value="/compareColumnIsNullBetweenSameTableName", method=RequestMethod.POST)
+	@RequestMapping(value="/compareColumnIsNullBetweenSameTableName",produces = "application/json; charset=utf-8", method=RequestMethod.POST)
 	public List<CompareResult> compareColumnIsNullBetweenSameTableName(ConnectionMessage connectionMessage) throws SQLException{
 		List<CompareResult> resultsList = compareService.compareColumnIsNullBetweenSameTableName(connectionMessage);
 		return resultsList;
@@ -46,7 +46,7 @@ public class CompareController {
 	
 	//比较两个数据库相同表的字段默认值是否相同
 	@ResponseBody
-	@RequestMapping(value="/compareColumnDefaultValueIsNullBetweenSameTableName", method=RequestMethod.POST)
+	@RequestMapping(value="/compareColumnDefaultValueIsNullBetweenSameTableName",produces = "application/json; charset=utf-8", method=RequestMethod.POST)
 	public List<CompareResult> compareColumnDefaultValueIsNullBetweenSameTableName(ConnectionMessage connectionMessage) throws SQLException{
 		List<CompareResult> resultsList = compareService.compareColumnDefaultValueIsNullBetweenSameTableName(connectionMessage);
 		return resultsList;
@@ -54,7 +54,7 @@ public class CompareController {
 	
 	//比较两个数据库相同表的字段数据类型是否相同
 	@ResponseBody
-	@RequestMapping(value="/compareDataTypeBetweenSameTableName", method=RequestMethod.POST)
+	@RequestMapping(value="/compareDataTypeBetweenSameTableName",produces = "application/json; charset=utf-8", method=RequestMethod.POST)
 	public List<CompareResult> compareDataTypeBetweenSameTableName(ConnectionMessage connectionMessage) throws SQLException{
 		List<CompareResult> resultsList = compareService.compareDataTypeBetweenSameTableName(connectionMessage);
 		return resultsList;
@@ -62,7 +62,7 @@ public class CompareController {
 	
 	//比较两个数据库相同表的字段数据类型的长度是否相同
 	@ResponseBody
-	@RequestMapping(value="/compareColumnTypeBetweenSameTableName", method=RequestMethod.POST)
+	@RequestMapping(value="/compareColumnTypeBetweenSameTableName", produces = "application/json; charset=utf-8",method=RequestMethod.POST)
 	public List<CompareResult> compareColumnTypeBetweenSameTableName(ConnectionMessage connectionMessage) throws SQLException{
 		List<CompareResult> resultsList = compareService.compareColumnTypeBetweenSameTableName(connectionMessage);
 		return resultsList;
