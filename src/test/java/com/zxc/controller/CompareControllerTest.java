@@ -48,9 +48,9 @@ public class CompareControllerTest {
 	}
 	
 	@Test
-	public void compareColumnDefaultValueIsNullBetweenSameTableNameTest() throws SQLException {
+	public void compareColumnDefaultValueBetweenSameTableNameTest() throws SQLException {
 		ConnectionMessage connectionMessage = new ConnectionMessage("127.0.0.1","3306","root","mysql","db1","db2");
-		List<CompareResult> resultsList = compareController.compareColumnDefaultValueIsNullBetweenSameTableName(connectionMessage);
+		List<CompareResult> resultsList = compareController.compareColumnDefaultValueBetweenSameTableName(connectionMessage);
 		System.out.println(resultsList.get(0).getDb1TableName());
 	}
 	

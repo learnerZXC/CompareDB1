@@ -46,9 +46,9 @@ public class CompareController {
 	
 	//比较两个数据库相同表的字段默认值是否相同
 	@ResponseBody
-	@RequestMapping(value="/compareColumnDefaultValueIsNullBetweenSameTableName",produces = "application/json; charset=utf-8", method=RequestMethod.POST)
-	public List<CompareResult> compareColumnDefaultValueIsNullBetweenSameTableName(ConnectionMessage connectionMessage) throws SQLException{
-		List<CompareResult> resultsList = compareService.compareColumnDefaultValueIsNullBetweenSameTableName(connectionMessage);
+	@RequestMapping(value="/compareColumnDefaultValueBetweenSameTableName",produces = "application/json; charset=utf-8", method=RequestMethod.POST)
+	public List<CompareResult> compareColumnDefaultValueBetweenSameTableName(ConnectionMessage connectionMessage) throws SQLException{
+		List<CompareResult> resultsList = compareService.compareColumnDefaultValueBetweenSameTableName(connectionMessage);
 		return resultsList;
 	}
 	

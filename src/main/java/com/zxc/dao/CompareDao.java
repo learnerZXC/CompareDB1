@@ -134,7 +134,7 @@ public class CompareDao {
 	}
 			
 	//比较两个数据库相同表的字段默认值是否相同
-	public List<CompareResult> compareColumnDefaultValueIsNullBetweenSameTableName(ConnectionMessage connectionMessage) throws SQLException{
+	public List<CompareResult> compareColumnDefaultValueBetweenSameTableName(ConnectionMessage connectionMessage) throws SQLException{
 		Connection conn = this.getConnection(connectionMessage);
 		String sql = "select a.TABLE_SCHEMA,a.TABLE_NAME,a.COLUMN_NAME,a.DATA_TYPE,a.COLUMN_DEFAULT,b.TABLE_SCHEMA,b.TABLE_NAME,b.COLUMN_NAME,a.DATA_TYPE,b.COLUMN_DEFAULT from information_schema.`COLUMNS` a " + 
 				"inner join information_schema.`COLUMNS` b on a.TABLE_SCHEMA='"+connectionMessage.getDb1Name()+"' and b.TABLE_SCHEMA='"+connectionMessage.getDb2Name()+"' " + 
@@ -147,10 +147,12 @@ public class CompareDao {
 			compareResult.setDb1Name(rs.getString("a.TABLE_SCHEMA"));
 			compareResult.setDb1TableName(rs.getString("a.TABLE_NAME"));
 			compareResult .setDb1ColumnName(rs.getString("a.COLUMN_NAME"));
+			compareResult.setDb1DataType(rs.getString("a.DATA_TYPE"));
 			compareResult.setDb1ColumnDefault(rs.getString("a.COLUMN_DEFAULT"));
 			compareResult.setDb2Name(rs.getString("b.TABLE_SCHEMA"));
 			compareResult.setDb2TableName(rs.getString("b.TABLE_NAME"));
 			compareResult .setDb2ColumnName(rs.getString("b.COLUMN_NAME"));
+			compareResult.setDb2DataType(rs.getString("b.DATA_TYPE"));
 			compareResult.setDb2ColumnDefault(rs.getString("b.COLUMN_DEFAULT"));
 			resultsList.add(compareResult);
 		}

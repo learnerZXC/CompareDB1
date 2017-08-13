@@ -38,8 +38,8 @@ public class CompareService {
 		}
 		
 	//比较两个数据库相同表的字段默认值是否相同
-		public List<CompareResult> compareColumnDefaultValueIsNullBetweenSameTableName(ConnectionMessage connectionMessage) throws SQLException{
-			List<CompareResult> resultsList = compareDao.compareColumnDefaultValueIsNullBetweenSameTableName(connectionMessage);
+		public List<CompareResult> compareColumnDefaultValueBetweenSameTableName(ConnectionMessage connectionMessage) throws SQLException{
+			List<CompareResult> resultsList = compareDao.compareColumnDefaultValueBetweenSameTableName(connectionMessage);
 			return resultsList;
 		}
 	//比较两个数据库相同表的字段数据类型是否相同
