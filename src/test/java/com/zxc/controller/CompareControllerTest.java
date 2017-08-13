@@ -23,6 +23,7 @@ public class CompareControllerTest {
 	public void compareColumnBetweenSameTableNameTest() throws SQLException {
 		ConnectionMessage connectionMessage = new ConnectionMessage("127.0.0.1","3306","root","mysql","db1","db2");
 		List<CompareResult> resultsList = compareController.compareColumnBetweenSameTableName(connectionMessage);
+		System.out.println(resultsList.size());
 		for(int i = 0;i < resultsList.size();i++) {
 			System.out.println(resultsList.get(i).getDb1ColumnName());
 		}
@@ -32,7 +33,11 @@ public class CompareControllerTest {
 	public void compareTableBetweenDifferentDBTest() throws SQLException {
 		ConnectionMessage connectionMessage = new ConnectionMessage("127.0.0.1","3306","root","mysql","db1","db2");
 		List<CompareResult> resultsList = compareController.compareTableBetweenDifferentDB(connectionMessage);
-		System.out.println(resultsList.get(0).getDb2TableName());
+		
+		System.out.println(resultsList.size());
+		for(int i = 0;i < resultsList.size();i++) {
+			System.out.println(resultsList.get(i).getDb1Name()+":"+resultsList.get(i).getDb1TableName());
+		}
 	}
 	
 	@Test

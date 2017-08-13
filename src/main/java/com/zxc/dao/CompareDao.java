@@ -54,18 +54,22 @@ public class CompareDao {
 		PreparedStatement statement2 = conn.prepareStatement(sql2.toString());
 		ResultSet rs2 = statement2.executeQuery();
 		List<CompareResult> resultsList = new ArrayList<CompareResult>();
-		CompareResult compareResult = new CompareResult();
+		CompareResult compareResult = null;
 		while(rs1.next()) {
+			compareResult = new CompareResult();
+			resultsList.add(compareResult);
 			compareResult.setDb1Name(rs1.getString("a.TABLE_SCHEMA"));
 			compareResult.setDb1TableName(rs1.getString("a.TABLE_NAME"));
 			compareResult.setDb1ColumnName(rs1.getString("a.COLUMN_NAME"));
+			
 		}
 		while(rs2.next()) {
-			compareResult.setDb2Name(rs2.getString("a.TABLE_SCHEMA"));
-			compareResult.setDb2TableName(rs2.getString("a.TABLE_NAME"));
-			compareResult.setDb2ColumnName(rs2.getString("a.COLUMN_NAME"));
+			compareResult = new CompareResult();
+			resultsList.add(compareResult);
+			compareResult.setDb1Name(rs2.getString("a.TABLE_SCHEMA"));
+			compareResult.setDb1TableName(rs2.getString("a.TABLE_NAME"));
+			compareResult.setDb1ColumnName(rs2.getString("a.COLUMN_NAME"));
 		}
-		resultsList.add(compareResult);
 		conn.close();
 		statement1.close();
 		statement2.close();
@@ -87,10 +91,13 @@ public class CompareDao {
 		List<CompareResult> resultsList = new ArrayList<CompareResult>();
 		while(rs.next()) {
 			CompareResult compareResult = new CompareResult();
-			compareResult.setDb1Name(rs.getString("c.TABLE_SCHEMA"));
-			compareResult.setDb1TableName(rs.getString("c.TABLE_NAME"));
-			compareResult.setDb2Name(rs.getString("b.TABLE_SCHEMA"));
-			compareResult.setDb2TableName(rs.getString("b.TABLE_NAME"));
+			if (rs.getString("b.TABLE_NAME") == null) {
+				compareResult.setDb1Name(rs.getString("c.TABLE_SCHEMA"));
+				compareResult.setDb1TableName(rs.getString("c.TABLE_NAME"));
+			}else {
+				compareResult.setDb1Name(rs.getString("b.TABLE_SCHEMA"));
+				compareResult.setDb1TableName(rs.getString("b.TABLE_NAME"));
+			}
 			resultsList.add(compareResult);
 		}
 		conn.close();
@@ -102,7 +109,7 @@ public class CompareDao {
 	//比较两个数据库相同表的字段不为空是否相同
 	public List<CompareResult> compareColumnIsNullBetweenSameTableName(ConnectionMessage connectionMessage) throws SQLException{
 		Connection conn = this.getConnection(connectionMessage);
-		String sql = "select a.TABLE_SCHEMA,a.TABLE_NAME,a.COLUMN_NAME,a.COLUMN_TYPE,a.IS_NULLABLE,a.COLUMN_DEFAULT,b.TABLE_SCHEMA,b.TABLE_NAME,b.COLUMN_NAME,b.COLUMN_TYPE,b.IS_NULLABLE ,b.COLUMN_DEFAULT,b.COLUMN_COMMENT " + 
+		String sql = "select a.TABLE_SCHEMA,a.TABLE_NAME,a.COLUMN_NAME,a.COLUMN_TYPE,a.IS_NULLABLE,b.TABLE_SCHEMA,b.TABLE_NAME,b.COLUMN_NAME,b.COLUMN_TYPE,b.IS_NULLABLE  " + 
 				"from information_schema.`COLUMNS` a inner join information_schema.`COLUMNS` b " + 
 				"on a.TABLE_SCHEMA='"+connectionMessage.getDb1Name()+"' and b.TABLE_SCHEMA='"+connectionMessage.getDb2Name()+"'and a.TABLE_NAME=b.TABLE_NAME and a.COLUMN_NAME=b.COLUMN_NAME and a.IS_NULLABLE<>b.IS_NULLABLE " + 
 				"where a.IS_NULLABLE='NO';";
@@ -116,13 +123,11 @@ public class CompareDao {
 			compareResult .setDb1ColumnName(rs.getString("a.COLUMN_NAME"));
 			compareResult.setDb1ColunmType(rs.getString("a.COLUMN_TYPE"));
 			compareResult.setDb1ColumnIsNull(rs.getString("a.IS_NULLABLE"));
-			compareResult.setDb1ColumnDefault(rs.getString("a.COLUMN_DEFAULT"));
 			compareResult.setDb2Name(rs.getString("b.TABLE_SCHEMA"));
 			compareResult.setDb2TableName(rs.getString("b.TABLE_NAME"));
 			compareResult .setDb2ColumnName(rs.getString("b.COLUMN_NAME"));
 			compareResult.setDb2ColunmType(rs.getString("b.COLUMN_TYPE"));
 			compareResult.setDb2ColumnIsNull(rs.getString("b.IS_NULLABLE"));
-			compareResult.setDb2ColumnDefault(rs.getString("b.COLUMN_DEFAULT"));
 			resultsList.add(compareResult);
 		}
 		conn.close();
@@ -161,7 +166,7 @@ public class CompareDao {
 	//比较两个数据库相同表的字段数据类型是否相同
 	public List<CompareResult> compareDataTypeBetweenSameTableName(ConnectionMessage connectionMessage) throws SQLException{
 		Connection conn = this.getConnection(connectionMessage);	
-		String sql = "select a.TABLE_SCHEMA,a.TABLE_NAME,a.COLUMN_NAME,a.DATA_TYPE,a.COLUMN_DEFAULT,b.TABLE_SCHEMA,b.TABLE_NAME,b.COLUMN_NAME,b.DATA_TYPE ,b.COLUMN_DEFAULT " + 
+		String sql = "select a.TABLE_SCHEMA,a.TABLE_NAME,a.COLUMN_NAME,a.DATA_TYPE,b.TABLE_SCHEMA,b.TABLE_NAME,b.COLUMN_NAME,b.DATA_TYPE " + 
 				"from information_schema.`COLUMNS` a inner join information_schema.`COLUMNS` b on a.TABLE_SCHEMA='"+connectionMessage.getDb1Name()+"' and b.TABLE_SCHEMA='"+connectionMessage.getDb2Name()+"' " + 
 				"and a.TABLE_NAME=b.TABLE_NAME and a.COLUMN_NAME=b.COLUMN_NAME and a.DATA_TYPE<>b.DATA_TYPE;";
 		PreparedStatement statement = conn.prepareStatement(sql.toString());
@@ -173,12 +178,10 @@ public class CompareDao {
 			compareResult.setDb1TableName(rs.getString("a.TABLE_NAME"));
 			compareResult .setDb1ColumnName(rs.getString("a.COLUMN_NAME"));
 			compareResult.setDb1DataType(rs.getString("a.DATA_TYPE"));
-			compareResult.setDb1ColumnDefault(rs.getString("a.COLUMN_DEFAULT"));
 			compareResult.setDb2Name(rs.getString("b.TABLE_SCHEMA"));
 			compareResult.setDb2TableName(rs.getString("b.TABLE_NAME"));
 			compareResult .setDb2ColumnName(rs.getString("b.COLUMN_NAME"));
 			compareResult.setDb2DataType(rs.getString("b.DATA_TYPE"));
-			compareResult.setDb2ColumnDefault(rs.getString("b.COLUMN_DEFAULT"));
 			resultsList.add(compareResult);
 		}
 		conn.close();
@@ -189,7 +192,7 @@ public class CompareDao {
 	//比较两个数据库相同表的字段数据类型的长度是否相同
 	public List<CompareResult> compareColumnTypeBetweenSameTableName(ConnectionMessage connectionMessage) throws SQLException{
 		Connection conn = this.getConnection(connectionMessage);	
-		String sql = "select a.TABLE_SCHEMA,a.TABLE_NAME,a.COLUMN_NAME,a.DATA_TYPE,a.COLUMN_TYPE,a.COLUMN_DEFAULT,b.TABLE_SCHEMA,b.TABLE_NAME,b.COLUMN_NAME,b.DATA_TYPE ,b.COLUMN_TYPE,b.COLUMN_DEFAULT " + 
+		String sql = "select a.TABLE_SCHEMA,a.TABLE_NAME,a.COLUMN_NAME,a.DATA_TYPE,a.COLUMN_TYPE,b.TABLE_SCHEMA,b.TABLE_NAME,b.COLUMN_NAME,b.DATA_TYPE ,b.COLUMN_TYPE " + 
 				"from information_schema.`COLUMNS` a inner join information_schema.`COLUMNS` b on a.TABLE_SCHEMA='"+connectionMessage.getDb1Name()+"' and b.TABLE_SCHEMA='"+connectionMessage.getDb2Name()+"' " + 
 				"and a.TABLE_NAME=b.TABLE_NAME and a.COLUMN_NAME=b.COLUMN_NAME and a.COLUMN_TYPE<>b.COLUMN_TYPE;";
 		PreparedStatement statement = conn.prepareStatement(sql.toString());
@@ -202,13 +205,11 @@ public class CompareDao {
 			compareResult .setDb1ColumnName(rs.getString("a.COLUMN_NAME"));
 			compareResult.setDb1DataType(rs.getString("a.DATA_TYPE"));
 			compareResult.setDb1ColunmType(rs.getString("a.COLUMN_TYPE"));
-			compareResult.setDb1ColumnDefault(rs.getString("a.COLUMN_DEFAULT"));
 			compareResult.setDb2Name(rs.getString("b.TABLE_SCHEMA"));
 			compareResult.setDb2TableName(rs.getString("b.TABLE_NAME"));
 			compareResult .setDb2ColumnName(rs.getString("b.COLUMN_NAME"));
 			compareResult.setDb2DataType(rs.getString("b.DATA_TYPE"));
 			compareResult.setDb1ColunmType(rs.getString("b.COLUMN_TYPE"));
-			compareResult.setDb2ColumnDefault(rs.getString("b.COLUMN_DEFAULT"));
 			resultsList.add(compareResult);
 		}
 		conn.close();
