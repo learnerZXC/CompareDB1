@@ -109,10 +109,9 @@ public class CompareDao {
 	//比较两个数据库相同表的字段不为空是否相同
 	public List<CompareResult> compareColumnIsNullBetweenSameTableName(ConnectionMessage connectionMessage) throws SQLException{
 		Connection conn = this.getConnection(connectionMessage);
-		String sql = "select a.TABLE_SCHEMA,a.TABLE_NAME,a.COLUMN_NAME,a.COLUMN_TYPE,a.IS_NULLABLE,b.TABLE_SCHEMA,b.TABLE_NAME,b.COLUMN_NAME,b.COLUMN_TYPE,b.IS_NULLABLE  " + 
+		String sql = "select a.TABLE_SCHEMA,a.TABLE_NAME,a.COLUMN_NAME,a.IS_NULLABLE,b.TABLE_SCHEMA,b.TABLE_NAME,b.COLUMN_NAME,b.IS_NULLABLE  " + 
 				"from information_schema.`COLUMNS` a inner join information_schema.`COLUMNS` b " + 
-				"on a.TABLE_SCHEMA='"+connectionMessage.getDb1Name()+"' and b.TABLE_SCHEMA='"+connectionMessage.getDb2Name()+"'and a.TABLE_NAME=b.TABLE_NAME and a.COLUMN_NAME=b.COLUMN_NAME and a.IS_NULLABLE<>b.IS_NULLABLE " + 
-				"where a.IS_NULLABLE='NO';";
+				"on a.TABLE_SCHEMA='"+connectionMessage.getDb1Name()+"' and b.TABLE_SCHEMA='"+connectionMessage.getDb2Name()+"'and a.TABLE_NAME=b.TABLE_NAME and a.COLUMN_NAME=b.COLUMN_NAME and a.IS_NULLABLE<>b.IS_NULLABLE ";
 		PreparedStatement statement = conn.prepareStatement(sql.toString());
 		ResultSet rs = statement.executeQuery();
 		List<CompareResult> resultsList = new ArrayList<CompareResult>();
@@ -121,12 +120,10 @@ public class CompareDao {
 			compareResult.setDb1Name(rs.getString("a.TABLE_SCHEMA"));
 			compareResult.setDb1TableName(rs.getString("a.TABLE_NAME"));
 			compareResult .setDb1ColumnName(rs.getString("a.COLUMN_NAME"));
-			compareResult.setDb1ColunmType(rs.getString("a.COLUMN_TYPE"));
 			compareResult.setDb1ColumnIsNull(rs.getString("a.IS_NULLABLE"));
 			compareResult.setDb2Name(rs.getString("b.TABLE_SCHEMA"));
 			compareResult.setDb2TableName(rs.getString("b.TABLE_NAME"));
 			compareResult .setDb2ColumnName(rs.getString("b.COLUMN_NAME"));
-			compareResult.setDb2ColunmType(rs.getString("b.COLUMN_TYPE"));
 			compareResult.setDb2ColumnIsNull(rs.getString("b.IS_NULLABLE"));
 			resultsList.add(compareResult);
 		}
@@ -139,9 +136,9 @@ public class CompareDao {
 	//比较两个数据库相同表的字段默认值是否相同
 	public List<CompareResult> compareColumnDefaultValueIsNullBetweenSameTableName(ConnectionMessage connectionMessage) throws SQLException{
 		Connection conn = this.getConnection(connectionMessage);
-		String sql = "select a.TABLE_SCHEMA,a.TABLE_NAME,a.COLUMN_NAME,a.COLUMN_DEFAULT,b.TABLE_SCHEMA,b.TABLE_NAME,b.COLUMN_NAME,b.COLUMN_DEFAULT from information_schema.`COLUMNS` a " + 
+		String sql = "select a.TABLE_SCHEMA,a.TABLE_NAME,a.COLUMN_NAME,a.DATA_TYPE,a.COLUMN_DEFAULT,b.TABLE_SCHEMA,b.TABLE_NAME,b.COLUMN_NAME,a.DATA_TYPE,b.COLUMN_DEFAULT from information_schema.`COLUMNS` a " + 
 				"inner join information_schema.`COLUMNS` b on a.TABLE_SCHEMA='"+connectionMessage.getDb1Name()+"' and b.TABLE_SCHEMA='"+connectionMessage.getDb2Name()+"' " + 
-				"and a.TABLE_NAME=b.TABLE_NAME and a.COLUMN_NAME=b.COLUMN_NAME and a.COLUMN_DEFAULT<>b.COLUMN_DEFAULT;";
+				"and a.TABLE_NAME=b.TABLE_NAME and a.COLUMN_NAME=b.COLUMN_NAME and a.DATA_TYPE=b.DATA_TYPE and a.COLUMN_DEFAULT<>b.COLUMN_DEFAULT;";
 		PreparedStatement statement = conn.prepareStatement(sql.toString());
 		ResultSet rs = statement.executeQuery();
 		List<CompareResult> resultsList = new ArrayList<CompareResult>();
