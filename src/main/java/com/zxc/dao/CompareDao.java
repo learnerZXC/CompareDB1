@@ -209,7 +209,7 @@ public class CompareDao {
 			compareResult.setDb2TableName(rs.getString("b.TABLE_NAME"));
 			compareResult .setDb2ColumnName(rs.getString("b.COLUMN_NAME"));
 			compareResult.setDb2DataType(rs.getString("b.DATA_TYPE"));
-			compareResult.setDb1ColunmType(rs.getString("b.COLUMN_TYPE"));
+			compareResult.setDb2ColunmType(rs.getString("b.COLUMN_TYPE"));
 			resultsList.add(compareResult);
 		}
 		conn.close();
