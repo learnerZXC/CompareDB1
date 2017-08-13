@@ -194,7 +194,7 @@ public class CompareDao {
 		Connection conn = this.getConnection(connectionMessage);	
 		String sql = "select a.TABLE_SCHEMA,a.TABLE_NAME,a.COLUMN_NAME,a.DATA_TYPE,a.COLUMN_TYPE,b.TABLE_SCHEMA,b.TABLE_NAME,b.COLUMN_NAME,b.DATA_TYPE ,b.COLUMN_TYPE " + 
 				"from information_schema.`COLUMNS` a inner join information_schema.`COLUMNS` b on a.TABLE_SCHEMA='"+connectionMessage.getDb1Name()+"' and b.TABLE_SCHEMA='"+connectionMessage.getDb2Name()+"' " + 
-				"and a.TABLE_NAME=b.TABLE_NAME and a.COLUMN_NAME=b.COLUMN_NAME and a.COLUMN_TYPE<>b.COLUMN_TYPE;";
+				"and a.TABLE_NAME=b.TABLE_NAME and a.COLUMN_NAME=b.COLUMN_NAME and a.DATA_TYPE=b.DATA_TYPE and a.COLUMN_TYPE<>b.COLUMN_TYPE;";
 		PreparedStatement statement = conn.prepareStatement(sql.toString());
 		ResultSet rs = statement.executeQuery();
 		List<CompareResult> resultsList = new ArrayList<CompareResult>();
