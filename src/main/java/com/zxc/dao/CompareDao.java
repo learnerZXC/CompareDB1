@@ -136,7 +136,7 @@ public class CompareDao {
 	//比较两个数据库相同表的字段默认值是否相同
 	public List<CompareResult> compareColumnDefaultValueBetweenSameTableName(ConnectionMessage connectionMessage) throws SQLException{
 		Connection conn = this.getConnection(connectionMessage);
-		String sql = "select a.TABLE_SCHEMA,a.TABLE_NAME,a.COLUMN_NAME,a.DATA_TYPE,a.COLUMN_DEFAULT,b.TABLE_SCHEMA,b.TABLE_NAME,b.COLUMN_NAME,a.DATA_TYPE,b.COLUMN_DEFAULT from information_schema.`COLUMNS` a " + 
+		String sql = "select a.TABLE_SCHEMA,a.TABLE_NAME,a.COLUMN_NAME,a.DATA_TYPE,a.COLUMN_DEFAULT,b.TABLE_SCHEMA,b.TABLE_NAME,b.COLUMN_NAME,b.DATA_TYPE,b.COLUMN_DEFAULT from information_schema.`COLUMNS` a " + 
 				"inner join information_schema.`COLUMNS` b on a.TABLE_SCHEMA='"+connectionMessage.getDb1Name()+"' and b.TABLE_SCHEMA='"+connectionMessage.getDb2Name()+"' " + 
 				"and a.TABLE_NAME=b.TABLE_NAME and a.COLUMN_NAME=b.COLUMN_NAME and a.DATA_TYPE=b.DATA_TYPE and a.COLUMN_DEFAULT<>b.COLUMN_DEFAULT;";
 		PreparedStatement statement = conn.prepareStatement(sql.toString());
