@@ -1,15 +1,13 @@
 package com.zxc.controller;
 
-import java.sql.SQLException;
-import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.zxc.entity.CompareResult;
 import com.zxc.entity.ConnectionMessage;
 
 @RunWith(SpringRunner.class)
@@ -20,51 +18,50 @@ public class CompareControllerTest {
 	private CompareController compareController;
 	
 	@Test
-	public void compareColumnBetweenSameTableNameTest() throws SQLException {
-		ConnectionMessage connectionMessage = new ConnectionMessage("127.0.0.1","3306","root","echoecho","db3","db4");
-		List<CompareResult> resultsList = compareController.compareColumnBetweenSameTableName(connectionMessage);
-		System.out.println(resultsList.size());
-		for(int i = 0;i < resultsList.size();i++) {
-			System.out.println(resultsList.get(i).getDb1ColumnName());
-		}
+	public void compareColumnBetweenSameTableNameTest() {
+		ConnectionMessage connectionMessage = new ConnectionMessage("127.0.0.1","3306","root","mysql","db3","db4");
+		ResponseEntity<?> resultsList = compareController.compareColumnBetweenSameTableName(connectionMessage);
+		System.out.println(resultsList.getStatusCodeValue());
+		System.out.println(resultsList.getBody());
 	}
 	
 	@Test
-	public void compareTableBetweenDifferentDBTest() throws SQLException {
-		ConnectionMessage connectionMessage = new ConnectionMessage("127.0.0.1","3306","root","mysql","db1","db2");
-		List<CompareResult> resultsList = compareController.compareTableBetweenDifferentDB(connectionMessage);
-		
-		System.out.println(resultsList.size());
-		for(int i = 0;i < resultsList.size();i++) {
-			System.out.println(resultsList.get(i).getDb1Name()+":"+resultsList.get(i).getDb1TableName());
-		}
+	public void compareTableBetweenDifferentDBTest(){
+		ConnectionMessage connectionMessage = new ConnectionMessage("127.0.0.1","3306","root","mysql","db3","db4");
+		ResponseEntity<?> resultsList = compareController.compareColumnBetweenSameTableName(connectionMessage);
+		System.out.println(resultsList.getStatusCodeValue());
+		System.out.println(resultsList.getBody());
 	}
 	
 	@Test
-	public void compareColumnIsNullBetweenSameTableNameTest() throws SQLException {
-		ConnectionMessage connectionMessage = new ConnectionMessage("127.0.0.1","3306","root","mysql","db1","db2");
-		List<CompareResult> resultsList = compareController.compareColumnIsNullBetweenSameTableName(connectionMessage);
-		System.out.println(resultsList.get(0).getDb1TableName());
+	public void compareColumnIsNullBetweenSameTableNameTest(){
+		ConnectionMessage connectionMessage = new ConnectionMessage("127.0.0.1","3306","root","mysql","db3","db4");
+		ResponseEntity<?> resultsList = compareController.compareColumnBetweenSameTableName(connectionMessage);
+		System.out.println(resultsList.getStatusCodeValue());
+		System.out.println(resultsList.getBody());
 	}
 	
 	@Test
-	public void compareColumnDefaultValueBetweenSameTableNameTest() throws SQLException {
-		ConnectionMessage connectionMessage = new ConnectionMessage("127.0.0.1","3306","root","mysql","db1","db2");
-		List<CompareResult> resultsList = compareController.compareColumnDefaultValueBetweenSameTableName(connectionMessage);
-		System.out.println(resultsList.get(0).getDb1TableName());
+	public void compareColumnDefaultValueBetweenSameTableNameTest(){
+		ConnectionMessage connectionMessage = new ConnectionMessage("127.0.0.1","3306","root","mysql","db3","db4");
+		ResponseEntity<?> resultsList = compareController.compareColumnBetweenSameTableName(connectionMessage);
+		System.out.println(resultsList.getStatusCodeValue());
+		System.out.println(resultsList.getBody());
 	}
 	
 	@Test
-	public void compareDataTypeBetweenSameTableNameTest() throws SQLException {
-		ConnectionMessage connectionMessage = new ConnectionMessage("127.0.0.1","3306","root","mysql","db1","db2");
-		List<CompareResult> resultsList = compareController.compareDataTypeBetweenSameTableName(connectionMessage);
-		System.out.println(resultsList.get(0).getDb1TableName());
+	public void compareDataTypeBetweenSameTableNameTest() {
+		ConnectionMessage connectionMessage = new ConnectionMessage("127.0.0.1","3306","root","mysql","db3","db4");
+		ResponseEntity<?> resultsList = compareController.compareColumnBetweenSameTableName(connectionMessage);
+		System.out.println(resultsList.getStatusCodeValue());
+		System.out.println(resultsList.getBody());
 	}
 	
 	@Test
-	public void compareColumnTypeBetweenSameTableNameTest() throws SQLException {
-		ConnectionMessage connectionMessage = new ConnectionMessage("127.0.0.1","3306","root","mysql","db1","db2");
-		List<CompareResult> resultsList = compareController.compareColumnTypeBetweenSameTableName(connectionMessage);
-		System.out.println(resultsList.get(0).getDb1TableName());
+	public void compareColumnTypeBetweenSameTableNameTest(){
+		ConnectionMessage connectionMessage = new ConnectionMessage("127.0.0.1","3306","root","mysql","db3","db4");
+		ResponseEntity<?> resultsList = compareController.compareColumnBetweenSameTableName(connectionMessage);
+		System.out.println(resultsList.getStatusCodeValue());
+		System.out.println(resultsList.getBody());
 	}
 }
