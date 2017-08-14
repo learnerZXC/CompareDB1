@@ -22,7 +22,7 @@ $(document).ready(function(){
 
 
     function compareTableBetweenDifferentDB() {
-        $.post("compare/compareTableBetweenDifferentDB", {
+        $.get("compare/compareTableBetweenDifferentDB", {
             "ip": $("#ip").val(),
             "port": $("#port").val(),
             "userName": $("#userName").val(),
@@ -49,7 +49,7 @@ $(document).ready(function(){
     }
 
     function compareColumnBetweenSameTableName() {
-        $.post("compare/compareColumnBetweenSameTableName", {
+        $.get("compare/compareColumnBetweenSameTableName", {
             "ip": $("#ip").val(),
             "port": $("#port").val(),
             "userName": $("#userName").val(),
@@ -76,7 +76,7 @@ $(document).ready(function(){
     }
 
     function compareDataTypeBetweenSameTableName() {
-        $.post("compare/compareDataTypeBetweenSameTableName", {
+        $.get("compare/compareDataTypeBetweenSameTableName", {
             "ip": $("#ip").val(),
             "port": $("#port").val(),
             "userName": $("#userName").val(),
@@ -103,7 +103,7 @@ $(document).ready(function(){
     }
 
     function compareColumnTypeBetweenSameTableName() {
-        $.post("compare/compareColumnTypeBetweenSameTableName", {
+        $.get("compare/compareColumnTypeBetweenSameTableName", {
             "ip": $("#ip").val(),
             "port": $("#port").val(),
             "userName": $("#userName").val(),
@@ -130,7 +130,7 @@ $(document).ready(function(){
     }
 
     function compareColumnIsNullBetweenSameTableName() {
-        $.post("compare/compareColumnIsNullBetweenSameTableName", {
+        $.get("compare/compareColumnIsNullBetweenSameTableName", {
             "ip": $("#ip").val(),
             "port": $("#port").val(),
             "userName": $("#userName").val(),
@@ -157,7 +157,7 @@ $(document).ready(function(){
     }
 
     function compareColumnDefaultValueBetweenSameTableName() {
-        $.post("compare/compareColumnDefaultValueBetweenSameTableName", {
+        $.get("compare/compareColumnDefaultValueBetweenSameTableName", {
             "ip": $("#ip").val(),
             "port": $("#port").val(),
             "userName": $("#userName").val(),
