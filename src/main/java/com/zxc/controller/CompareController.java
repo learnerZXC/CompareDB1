@@ -23,48 +23,79 @@ public class CompareController {
 	//比较两个数据库中相同表名的不同字段
 	@ResponseBody
 	@RequestMapping(value="/compareColumnBetweenSameTableName", produces = "application/json; charset=utf-8",method=RequestMethod.POST)
-	public List<CompareResult> compareColumnBetweenSameTableName(ConnectionMessage connectionMessage) throws SQLException{
-		List<CompareResult> resultsList = compareService.compareColumnBetweenSameTableName(connectionMessage);
-		return resultsList;
+	public List<CompareResult> compareColumnBetweenSameTableName(ConnectionMessage connectionMessage)  {
+		List<CompareResult> resultsList;
+		try {
+			resultsList = compareService.compareColumnBetweenSameTableName(connectionMessage);
+			return resultsList;
+		} catch (SQLException e) {
+			return null;
+		}
 	}
 	
 	//比较两个数据库中互相不存在的表
 	@ResponseBody
 	@RequestMapping(value="/compareTableBetweenDifferentDB",produces = "application/json; charset=utf-8", method=RequestMethod.POST)
-	public List<CompareResult> compareTableBetweenDifferentDB(ConnectionMessage connectionMessage) throws SQLException{
-		List<CompareResult> resultsList = compareService.compareTableBetweenDifferentDB(connectionMessage);
-		return resultsList;
+	public List<CompareResult> compareTableBetweenDifferentDB(ConnectionMessage connectionMessage){
+		List<CompareResult> resultsList;
+		try {
+			resultsList = compareService.compareTableBetweenDifferentDB(connectionMessage);
+			return resultsList;
+		} catch (SQLException e) {
+			return null;
+		}
 	}
 	
 	//比较两个数据库相同表的字段不为空是否相同
 	@ResponseBody
 	@RequestMapping(value="/compareColumnIsNullBetweenSameTableName",produces = "application/json; charset=utf-8", method=RequestMethod.POST)
-	public List<CompareResult> compareColumnIsNullBetweenSameTableName(ConnectionMessage connectionMessage) throws SQLException{
-		List<CompareResult> resultsList = compareService.compareColumnIsNullBetweenSameTableName(connectionMessage);
-		return resultsList;
+	public List<CompareResult> compareColumnIsNullBetweenSameTableName(ConnectionMessage connectionMessage){
+		List<CompareResult> resultsList;
+		try {
+			resultsList = compareService.compareColumnIsNullBetweenSameTableName(connectionMessage);
+			return resultsList;
+		} catch (SQLException e) {
+			return null;
+		}
 	}
 	
 	//比较两个数据库相同表的字段默认值是否相同
 	@ResponseBody
 	@RequestMapping(value="/compareColumnDefaultValueBetweenSameTableName",produces = "application/json; charset=utf-8", method=RequestMethod.POST)
-	public List<CompareResult> compareColumnDefaultValueBetweenSameTableName(ConnectionMessage connectionMessage) throws SQLException{
-		List<CompareResult> resultsList = compareService.compareColumnDefaultValueBetweenSameTableName(connectionMessage);
-		return resultsList;
+	public List<CompareResult> compareColumnDefaultValueBetweenSameTableName(ConnectionMessage connectionMessage){
+		List<CompareResult> resultsList;
+		try {
+			resultsList = compareService.compareColumnDefaultValueBetweenSameTableName(connectionMessage);
+			return resultsList;
+		} catch (SQLException e) {
+			return null;
+		}
+		
 	}
 	
 	//比较两个数据库相同表的字段数据类型是否相同
 	@ResponseBody
 	@RequestMapping(value="/compareDataTypeBetweenSameTableName",produces = "application/json; charset=utf-8", method=RequestMethod.POST)
-	public List<CompareResult> compareDataTypeBetweenSameTableName(ConnectionMessage connectionMessage) throws SQLException{
-		List<CompareResult> resultsList = compareService.compareDataTypeBetweenSameTableName(connectionMessage);
-		return resultsList;
+	public List<CompareResult> compareDataTypeBetweenSameTableName(ConnectionMessage connectionMessage){
+		List<CompareResult> resultsList;
+		try {
+			resultsList = compareService.compareDataTypeBetweenSameTableName(connectionMessage);
+			return resultsList;
+		} catch (SQLException e) {
+			return null;
+		}
 	}
 	
 	//比较两个数据库相同表的字段数据类型的长度是否相同
 	@ResponseBody
 	@RequestMapping(value="/compareColumnTypeBetweenSameTableName", produces = "application/json; charset=utf-8",method=RequestMethod.POST)
-	public List<CompareResult> compareColumnTypeBetweenSameTableName(ConnectionMessage connectionMessage) throws SQLException{
-		List<CompareResult> resultsList = compareService.compareColumnTypeBetweenSameTableName(connectionMessage);
-		return resultsList;
+	public List<CompareResult> compareColumnTypeBetweenSameTableName(ConnectionMessage connectionMessage){
+		List<CompareResult> resultsList;
+		try {
+			resultsList = compareService.compareColumnTypeBetweenSameTableName(connectionMessage);
+			return resultsList;
+		} catch (SQLException e) {
+			return null;
+		}
 	}
 }
