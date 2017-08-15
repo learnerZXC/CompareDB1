@@ -1,5 +1,45 @@
 $(document).ready(function(){
 
+    $("#compareAll").click(function(){
+        clearExistTable();
+        compareTableBetweenDifferentDB();
+        compareColumnBetweenSameTableName();
+        compareDataTypeBetweenSameTableName();
+        compareColumnTypeBetweenSameTableName();
+        compareColumnIsNullBetweenSameTableName();
+        compareColumnDefaultValueBetweenSameTableName();
+    });
+
+    $("#compareTableBetweenDifferentDB").click(function(){
+        clearExistTable();
+        compareTableBetweenDifferentDB();
+    });
+
+    $("#compareColumnBetweenSameTableName").click(function(){
+        clearExistTable();
+        compareColumnBetweenSameTableName();
+    });
+
+    $("#compareDataTypeBetweenSameTableName").click(function(){
+        clearExistTable();
+        compareDataTypeBetweenSameTableName();
+    });
+
+    $("#compareColumnTypeBetweenSameTableName").click(function(){
+        clearExistTable();
+        compareColumnTypeBetweenSameTableName();
+    });
+
+    $("#compareColumnIsNullBetweenSameTableName").click(function(){
+        clearExistTable();
+        compareColumnIsNullBetweenSameTableName();
+    });
+
+    $("#compareColumnDefaultValueBetweenSameTableName").click(function(){
+        clearExistTable();
+        compareColumnDefaultValueBetweenSameTableName();
+    });
+
     function clearExistTable() {
         $("#error-message").css('display', 'none');
         $("#error-message").css('display', 'none');
@@ -156,7 +196,7 @@ $(document).ready(function(){
             table = trH + trB;
             $("#table-title-compareColumnIsNullBetweenSameTableName").css('display', '');
             $("#resultTable-compareColumnIsNullBetweenSameTableName").css('display', '');
-            $("#table-title-compareColumnIsNullBetweenSameTableName").text("两数据库中相同表 相同列名 数据类型相同 数据类型是否可为空不一致的有：");
+            $("#table-title-compareColumnIsNullBetweenSameTableName").text("两数据库中相同表 相同列名 数据类型是否可为空不一致的有：");
             $("#resultTable-compareColumnIsNullBetweenSameTableName").html(table);
         }).fail(function() {
             $("#error-message").css('display', '');
@@ -191,47 +231,5 @@ $(document).ready(function(){
             $("#error-message").text("数据库连接失败...");
         });
     }
-
-
-
-    $("#compareAll").click(function(){
-        clearExistTable();
-        compareTableBetweenDifferentDB();
-        compareColumnBetweenSameTableName();
-        compareDataTypeBetweenSameTableName();
-        compareColumnTypeBetweenSameTableName();
-        compareColumnIsNullBetweenSameTableName();
-        compareColumnDefaultValueBetweenSameTableName();
-    });
-
-    $("#compareTableBetweenDifferentDB").click(function(){
-        clearExistTable();
-        compareTableBetweenDifferentDB();
-    });
-
-    $("#compareColumnBetweenSameTableName").click(function(){
-        clearExistTable();
-        compareColumnBetweenSameTableName();
-    });
-
-    $("#compareDataTypeBetweenSameTableName").click(function(){
-        clearExistTable();
-        compareDataTypeBetweenSameTableName();
-    });
-
-    $("#compareColumnTypeBetweenSameTableName").click(function(){
-        clearExistTable();
-        compareColumnTypeBetweenSameTableName();
-    });
-
-    $("#compareColumnIsNullBetweenSameTableName").click(function(){
-        clearExistTable();
-        compareColumnIsNullBetweenSameTableName();
-    });
-
-    $("#compareColumnDefaultValueBetweenSameTableName").click(function(){
-        clearExistTable();
-        compareColumnDefaultValueBetweenSameTableName();
-    });
 
 });
