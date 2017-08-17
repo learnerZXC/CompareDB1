@@ -6,10 +6,10 @@
 	<groupId>com.zxc</groupId>
 	<artifactId>CompareDB1</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<name>CompareDB1</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Demo project for compareDB</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
